@@ -43,22 +43,37 @@ myGameArea.start();
 }
 
 var myGameArea = {
-canvas: document.createElement("canvas"),
-start: function () {
-this.canvas.width = 480;
-this.canvas.height = 270;
-this.context = this.canvas.getContext("2d");
-document.body.insertBefore(this.canvas, document.body.childNodes[0]);
-this.frameNo = 0;  
-this.interval = setInterval(updateGameArea, 20);
-},
-clear: function () {
-this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
-},
-  stop : function() {
-    clearInterval(this.interval);
-  }
-}
+    canvas: document.createElement("canvas"),
+    start: function () {
+
+        // Internal resolution (2x)
+        this.canvas.width = 960;
+        this.canvas.height = 540;
+
+        // Displayed size (same as before)
+        this.canvas.style.width = "480px";
+        this.canvas.style.height = "270px";
+
+        this.context = this.canvas.getContext("2d");
+
+        // Scale all drawing so your existing coordinates still work
+        this.context.scale(2, 2);
+
+        document.body.insertBefore(this.canvas, document.body.childNodes[0]);
+
+        this.frameNo = 0;
+        this.interval = setInterval(updateGameArea, 20);
+    },
+
+    clear: function () {
+        // Clear the scaled canvas correctly
+        this.context.clearRect(0, 0, 480, 270);
+    },
+
+    stop: function () {
+        clearInterval(this.interval);
+    }
+};
 
 function everyinterval(n) {
   if ((myGameArea.frameNo / n) % 1 == 0) {return true;}
@@ -71,6 +86,9 @@ if (type == "image" || type == "background") {
     this.image = new Image();
     this.image.src = color;
 }
+
+
+
 this.width = width;
 this.height = height;
 this.speedX = 0;
@@ -139,7 +157,7 @@ this.hitBottom(); // Call hitBottom and check it`s return value
   }
 
 this.hitBottom = function () {
-var rockbottom = myGameArea.canvas.height - this.height;
+var rockbottom = 270 - this.height;
 if (this.y > rockbottom) {
 this.y = rockbottom;
 this.gravitySpeed = 0; // Reset gravity speed when hitting the ground
@@ -168,7 +186,7 @@ function updateGameArea() {
   myBackground.update();
     myGameArea.frameNo += 1;
     if (myGameArea.frameNo == 1 || everyinterval(150)) {
-        x = myGameArea.canvas.width;
+        x = 480;
         minHeight = 120;
         maxHeight = 170;
         height = Math.floor(Math.random()*(maxHeight-minHeight+1)+minHeight);
