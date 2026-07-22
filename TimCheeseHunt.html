@@ -88,7 +88,6 @@
   <div id="topRight">TIM CHEESES SLAIN: <span id="kills">0</span></div>
   <div id="bottomRight">WEAPON: <span id="weaponName">Pistol</span></div>
   <div id="interactPrompt">Press E</div>
-  <div id="controlModeIndicator">detecting input mode...</div>
   <div id="toast-container"></div>
 
   <div id="touchControls">
@@ -104,7 +103,7 @@
   <div id="startOverlay">
     <div style="font-size:20px;">🧀 CLICK TO DROP IN 🔫</div>
     <div style="font-size:12px; margin-top:10px; max-width:460px;">
-      Shoot the Tim Cheeses before they swarm you. Eat food (E) to heal and stay fed — hunger caps at 100, don't overeat. Break chests (E) for new guns. Cover blocks bullets and movement now.
+      Shoot the Tim Cheeses before they swarm you — watch for tiny fast Mini Cheeses, tanky Big Cheeses, and Provolone Poppers that lob cheese wheels at range. Eat food (E) to heal and stay fed — hunger caps at 100, don't overeat. Break chests (E) for new guns. Cover blocks bullets and movement.
     </div>
     <button onclick="startGame()">DROP IN</button>
   </div>
@@ -158,29 +157,85 @@ sun.shadow.camera.top = 70; sun.shadow.camera.bottom = -70;
 sun.shadow.camera.near = 1; sun.shadow.camera.far = 150;
 scene.add(sun);
 
+// ================= PROCEDURAL TEXTURES (canvas-generated, no image files / no copyright) =================
+function makeGrassTexture() {
+  const c = document.createElement('canvas');
+  c.width = 256; c.height = 256;
+  const ctx2d = c.getContext('2d');
+  ctx2d.fillStyle = '#4a8f4a';
+  ctx2d.fillRect(0, 0, 256, 256);
+  for (let i = 0; i < 3000; i++) {
+    const shade = 30 + Math.random() * 50;
+    ctx2d.fillStyle = `rgba(${40+shade*0.3},${100+shade},${40+shade*0.3},0.5)`;
+    const x = Math.random()*256, y = Math.random()*256;
+    ctx2d.fillRect(x, y, 2, 2 + Math.random()*3);
+  }
+  const tex = new THREE.CanvasTexture(c);
+  tex.wrapS = THREE.RepeatWrapping; tex.wrapT = THREE.RepeatWrapping;
+  tex.repeat.set(40, 40);
+  return tex;
+}
+function makeWoodTexture() {
+  const c = document.createElement('canvas');
+  c.width = 128; c.height = 128;
+  const ctx2d = c.getContext('2d');
+  ctx2d.fillStyle = '#886644';
+  ctx2d.fillRect(0, 0, 128, 128);
+  for (let i = 0; i < 14; i++) {
+    ctx2d.strokeStyle = `rgba(60,40,20,${0.3+Math.random()*0.3})`;
+    ctx2d.lineWidth = 2 + Math.random()*3;
+    ctx2d.beginPath();
+    ctx2d.moveTo(0, i*10 + Math.random()*8);
+    ctx2d.lineTo(128, i*10 + Math.random()*8);
+    ctx2d.stroke();
+  }
+  const tex = new THREE.CanvasTexture(c);
+  tex.wrapS = THREE.RepeatWrapping; tex.wrapT = THREE.RepeatWrapping;
+  return tex;
+}
+function makeCheeseTexture() {
+  const c = document.createElement('canvas');
+  c.width = 128; c.height = 128;
+  const ctx2d = c.getContext('2d');
+  ctx2d.fillStyle = '#f5d76e';
+  ctx2d.fillRect(0, 0, 128, 128);
+  for (let i = 0; i < 40; i++) {
+    ctx2d.fillStyle = `rgba(200,150,50,${0.15+Math.random()*0.2})`;
+    ctx2d.beginPath();
+    ctx2d.arc(Math.random()*128, Math.random()*128, 3 + Math.random()*6, 0, Math.PI*2);
+    ctx2d.fill();
+  }
+  const tex = new THREE.CanvasTexture(c);
+  tex.wrapS = THREE.RepeatWrapping; tex.wrapT = THREE.RepeatWrapping;
+  return tex;
+}
+const grassTexture = makeGrassTexture();
+const woodTexture = makeWoodTexture();
+const cheeseTexture = makeCheeseTexture();
+
 // ground
-const groundGeo = new THREE.PlaneGeometry(200, 200, 40, 40);
-const groundMat = new THREE.MeshStandardMaterial({ color: 0x4a8f4a, roughness: 0.9 });
+const groundGeo = new THREE.PlaneGeometry(400, 400, 60, 60);
+const groundMat = new THREE.MeshStandardMaterial({ map: grassTexture, roughness: 0.9 });
 const ground = new THREE.Mesh(groundGeo, groundMat);
 ground.rotation.x = -Math.PI / 2;
 ground.receiveShadow = true;
 scene.add(ground);
 
 // decorative distant mountains
-for (let i = 0; i < 16; i++) {
-  const ang = (i / 16) * Math.PI * 2;
+for (let i = 0; i < 24; i++) {
+  const ang = (i / 24) * Math.PI * 2;
   const m = new THREE.Mesh(
-    new THREE.ConeGeometry(14 + Math.random()*8, 22 + Math.random()*14, 6),
+    new THREE.ConeGeometry(18 + Math.random()*10, 28 + Math.random()*18, 6),
     new THREE.MeshStandardMaterial({ color: 0x6b7a8f })
   );
-  m.position.set(Math.cos(ang) * 90, 10, Math.sin(ang) * 90);
+  m.position.set(Math.cos(ang) * 165, 12, Math.sin(ang) * 165);
   scene.add(m);
 }
 // floating clouds
 const clouds = [];
-for (let i = 0; i < 10; i++) {
+for (let i = 0; i < 16; i++) {
   const c = new THREE.Mesh(new THREE.SphereGeometry(3 + Math.random()*2, 8, 8), new THREE.MeshStandardMaterial({ color: 0xffffff, transparent:true, opacity:0.85 }));
-  c.position.set((Math.random()-0.5)*120, 22 + Math.random()*8, (Math.random()-0.5)*120);
+  c.position.set((Math.random()-0.5)*220, 22 + Math.random()*10, (Math.random()-0.5)*220);
   c.scale.y = 0.5;
   scene.add(c);
   clouds.push(c);
@@ -190,7 +245,7 @@ for (let i = 0; i < 10; i++) {
 const obstacles = [];
 function addBoxObstacle(x, z, size, color) {
   const geo = new THREE.BoxGeometry(size, size, size);
-  const mesh = new THREE.Mesh(geo, new THREE.MeshStandardMaterial({ color }));
+  const mesh = new THREE.Mesh(geo, new THREE.MeshStandardMaterial({ map: woodTexture, color }));
   mesh.position.set(x, size/2, z);
   mesh.castShadow = true; mesh.receiveShadow = true;
   scene.add(mesh);
@@ -198,7 +253,7 @@ function addBoxObstacle(x, z, size, color) {
 }
 function addTreeObstacle(x, z) {
   const g = new THREE.Group();
-  const trunk = new THREE.Mesh(new THREE.CylinderGeometry(0.35, 0.45, 3, 8), new THREE.MeshStandardMaterial({ color: 0x6b4423 }));
+  const trunk = new THREE.Mesh(new THREE.CylinderGeometry(0.35, 0.45, 3, 8), new THREE.MeshStandardMaterial({ map: woodTexture, color: 0x6b4423 }));
   trunk.position.y = 1.5; trunk.castShadow = true;
   g.add(trunk);
   const foliage = new THREE.Mesh(new THREE.ConeGeometry(1.8, 3.2, 8), new THREE.MeshStandardMaterial({ color: 0x2e6b2e }));
@@ -208,14 +263,14 @@ function addTreeObstacle(x, z) {
   scene.add(g);
   obstacles.push({ mesh: { position: g.position }, halfSize: 0.6 });
 }
-for (let i = 0; i < 12; i++) {
+for (let i = 0; i < 26; i++) {
   const angle = Math.random() * Math.PI * 2;
-  const rad = 10 + Math.random() * 45;
+  const rad = 10 + Math.random() * 90;
   addBoxObstacle(Math.cos(angle)*rad, Math.sin(angle)*rad, 2 + Math.random()*2, Math.random() > 0.5 ? 0x886644 : 0x777777);
 }
-for (let i = 0; i < 14; i++) {
+for (let i = 0; i < 34; i++) {
   const angle = Math.random() * Math.PI * 2;
-  const rad = 8 + Math.random() * 48;
+  const rad = 8 + Math.random() * 100;
   addTreeObstacle(Math.cos(angle)*rad, Math.sin(angle)*rad);
 }
 
@@ -310,7 +365,8 @@ renderInventory();
 
 // ================= FOOD & CHESTS =================
 const foodSpots = [];
-const FOOD_POSITIONS = [[8,0,8],[-8,0,8],[8,0,-8],[-8,0,-8],[15,0,0],[-15,0,0],[0,0,15],[0,0,-15],[25,0,25],[-25,0,-25]];
+const FOOD_POSITIONS = [[8,0,8],[-8,0,8],[8,0,-8],[-8,0,-8],[15,0,0],[-15,0,0],[0,0,15],[0,0,-15],[25,0,25],[-25,0,-25],
+  [40,0,10],[-40,0,10],[10,0,40],[-10,0,40],[60,0,0],[-60,0,0],[0,0,60],[0,0,-60],[70,0,70],[-70,0,-70]];
 function spawnFoodAt(pos) {
   const g = new THREE.Mesh(new THREE.SphereGeometry(0.4, 12, 12), new THREE.MeshStandardMaterial({ color: 0xd98c3d }));
   g.position.set(pos[0], 0.5, pos[2]);
@@ -321,7 +377,8 @@ function spawnFoodAt(pos) {
 FOOD_POSITIONS.forEach(p => foodSpots.push({ mesh: spawnFoodAt(p), pos: p, available: true, respawnAt: 0 }));
 
 const chests = [];
-const CHEST_POSITIONS = [[20,0,20],[-20,0,20],[20,0,-20],[-20,0,-20],[0,0,25],[30,0,0]];
+const CHEST_POSITIONS = [[20,0,20],[-20,0,20],[20,0,-20],[-20,0,-20],[0,0,25],[30,0,0],
+  [55,0,55],[-55,0,55],[55,0,-55],[-55,0,-55],[0,0,90],[90,0,0]];
 CHEST_POSITIONS.forEach(p => {
   const mesh = new THREE.Mesh(new THREE.BoxGeometry(1.4, 1, 1), new THREE.MeshStandardMaterial({ color: 0x8b5a2b }));
   mesh.position.set(p[0], 0.5, p[2]);
@@ -330,39 +387,96 @@ CHEST_POSITIONS.forEach(p => {
   chests.push({ mesh, pos: p, opened: false });
 });
 
-// ================= ENEMIES: TIM CHEESE =================
-function createTimCheese() {
+// ================= ENEMIES: TIM CHEESE (multiple types) =================
+const CHEESE_TYPES = {
+  mini: { name: 'Mini Cheese', scale: 0.6, color: 0xfff2b0, hpMult: 0.5, speedMult: 1.6, dmg: 5, ranged: false },
+  classic: { name: 'Tim Cheese', scale: 1.0, color: 0xf5d76e, hpMult: 1.0, speedMult: 1.0, dmg: 8, ranged: false },
+  big: { name: 'Big Cheese', scale: 1.6, color: 0xe0a83a, hpMult: 2.4, speedMult: 0.6, dmg: 16, ranged: false },
+  ranged: { name: 'Provolone Popper', scale: 0.9, color: 0xffe08a, hpMult: 0.8, speedMult: 0.9, dmg: 10, ranged: true },
+};
+
+function createTimCheese(type) {
   const g = new THREE.Group();
-  const body = new THREE.Mesh(new THREE.CylinderGeometry(0.7, 0.7, 1.4, 10), new THREE.MeshStandardMaterial({ color: 0xf5d76e }));
-  body.position.y = 1.0; body.castShadow = true;
+  const s = type.scale;
+  const body = new THREE.Mesh(new THREE.CylinderGeometry(0.7*s, 0.7*s, 1.4*s, 10), new THREE.MeshStandardMaterial({ map: cheeseTexture, color: type.color }));
+  body.position.y = 1.0*s; body.castShadow = true;
   g.add(body);
   for (let i = 0; i < 4; i++) {
-    const hole = new THREE.Mesh(new THREE.CircleGeometry(0.15, 8), new THREE.MeshStandardMaterial({ color: 0x222222 }));
+    const hole = new THREE.Mesh(new THREE.CircleGeometry(0.15*s, 8), new THREE.MeshStandardMaterial({ color: 0x222222 }));
     const ang = (i/4) * Math.PI * 2;
-    hole.position.set(Math.cos(ang)*0.71, 0.7 + (i%2)*0.4, Math.sin(ang)*0.71);
+    hole.position.set(Math.cos(ang)*0.71*s, (0.7 + (i%2)*0.4)*s, Math.sin(ang)*0.71*s);
     hole.rotation.y = -ang + Math.PI/2;
     g.add(hole);
   }
-  const eyeWhiteGeo = new THREE.SphereGeometry(0.18, 8, 8);
+  const eyeWhiteGeo = new THREE.SphereGeometry(0.18*s, 8, 8);
   const eyeWhiteMat = new THREE.MeshStandardMaterial({ color: 0xffffff });
-  const eyeL = new THREE.Mesh(eyeWhiteGeo, eyeWhiteMat); eyeL.position.set(-0.25, 1.8, 0.6); g.add(eyeL);
-  const eyeR = new THREE.Mesh(eyeWhiteGeo, eyeWhiteMat); eyeR.position.set(0.25, 1.8, 0.6); g.add(eyeR);
-  const pupilGeo = new THREE.SphereGeometry(0.08, 8, 8);
+  const eyeL = new THREE.Mesh(eyeWhiteGeo, eyeWhiteMat); eyeL.position.set(-0.25*s, 1.8*s, 0.6*s); g.add(eyeL);
+  const eyeR = new THREE.Mesh(eyeWhiteGeo, eyeWhiteMat); eyeR.position.set(0.25*s, 1.8*s, 0.6*s); g.add(eyeR);
+  const pupilGeo = new THREE.SphereGeometry(0.08*s, 8, 8);
   const pupilMat = new THREE.MeshStandardMaterial({ color: 0x000000 });
-  const pL = new THREE.Mesh(pupilGeo, pupilMat); pL.position.set(-0.25, 1.8, 0.75); g.add(pL);
-  const pR = new THREE.Mesh(pupilGeo, pupilMat); pR.position.set(0.25, 1.8, 0.75); g.add(pR);
+  const pL = new THREE.Mesh(pupilGeo, pupilMat); pL.position.set(-0.25*s, 1.8*s, 0.75*s); g.add(pL);
+  const pR = new THREE.Mesh(pupilGeo, pupilMat); pR.position.set(0.25*s, 1.8*s, 0.75*s); g.add(pR);
+  if (type.ranged) {
+    // little antenna/hat so ranged cheeses are visually distinct at a glance
+    const hat = new THREE.Mesh(new THREE.ConeGeometry(0.25*s, 0.5*s, 8), new THREE.MeshStandardMaterial({ color: 0xaa3333 }));
+    hat.position.y = 2.1*s;
+    g.add(hat);
+  }
   return g;
 }
 let enemies = [];
 let wave = 1, killCount = 0, waveTimer = 0;
-const MAX_ENEMIES = 16;
+const MAX_ENEMIES = 24;
+
+function pickEnemyType() {
+  const r = Math.random();
+  if (wave >= 3 && r < 0.12) return CHEESE_TYPES.ranged;
+  if (wave >= 2 && r < 0.30) return CHEESE_TYPES.big;
+  if (r < 0.55) return CHEESE_TYPES.mini;
+  return CHEESE_TYPES.classic;
+}
+
 function spawnEnemy() {
   const angle = Math.random() * Math.PI * 2;
-  const rad = 35 + Math.random() * 10;
-  const mesh = createTimCheese();
+  const rad = 35 + Math.random() * 15;
+  const type = pickEnemyType();
+  const mesh = createTimCheese(type);
   mesh.position.set(player.position.x + Math.cos(angle)*rad, 0, player.position.z + Math.sin(angle)*rad);
   scene.add(mesh);
-  enemies.push({ mesh, hp: 40 + wave * 8, speed: 0.03 + Math.random()*0.015 + wave*0.002, contactCooldown: 0 });
+  enemies.push({
+    mesh, type,
+    hp: (40 + wave * 8) * type.hpMult,
+    speed: (0.03 + Math.random()*0.015 + wave*0.002) * type.speedMult,
+    contactCooldown: 0,
+    rangedCooldown: 0,
+  });
+}
+
+// ---- ranged enemy projectiles (rolling cheese wheels) ----
+let cheeseProjectiles = [];
+function spawnCheeseProjectile(from, targetPos, dmg) {
+  const mesh = new THREE.Mesh(new THREE.TorusGeometry(0.35, 0.15, 8, 12), new THREE.MeshStandardMaterial({ map: cheeseTexture, color: 0xf5d76e }));
+  mesh.position.copy(from);
+  mesh.position.y = 0.6;
+  scene.add(mesh);
+  const dir = new THREE.Vector3().subVectors(targetPos, from);
+  dir.y = 0; dir.normalize();
+  cheeseProjectiles.push({ mesh, dir, dmg, speed: 0.22, life: 4000, spawned: Date.now() });
+}
+function updateCheeseProjectiles() {
+  cheeseProjectiles = cheeseProjectiles.filter(p => {
+    if (Date.now() - p.spawned > p.life) { scene.remove(p.mesh); return false; }
+    p.mesh.position.addScaledVector(p.dir, p.speed);
+    p.mesh.rotation.x -= p.speed * 2;
+    const dx = p.mesh.position.x - player.position.x, dz = p.mesh.position.z - player.position.z;
+    if (Math.hypot(dx, dz) < 1.1) {
+      hp -= p.dmg;
+      shakeAmount = Math.min(0.3, shakeAmount + 0.15);
+      scene.remove(p.mesh);
+      return false;
+    }
+    return true;
+  });
 }
 
 // ================= VFX: tracers, hit particles, screen shake =================
@@ -404,8 +518,7 @@ function attemptPointerLock() {
   renderer.domElement.requestPointerLock();
   setTimeout(() => {
     pointerLockMode = document.pointerLockElement === renderer.domElement;
-    document.getElementById('controlModeIndicator').textContent = pointerLockMode
-      ? console.log('mouse-look: pointer lock (1:1)') : console.log('mouse-look: free-look fallback (sandboxed here — works 1:1 if opened outside chat)');
+    pointerLockMode ? console.log("mouse-look: pointer lock (1:1)") : console.log('mouse-look: free-look fallback (sandboxed here — works 1:1 if opened outside chat)');
   }, 350);
 }
 document.addEventListener('pointerlockchange', () => {
@@ -691,6 +804,8 @@ function startGame() {
 function restartGame() {
   enemies.forEach(e => scene.remove(e.mesh));
   enemies = [];
+  cheeseProjectiles.forEach(p => scene.remove(p.mesh));
+  cheeseProjectiles = [];
   hp = 100; hunger = 100; wave = 1; killCount = 0; waveTimer = 0;
   inventory = [WEAPON_POOL[0]];
   equippedIndex = 0;
@@ -768,8 +883,8 @@ function update() {
   if (player.position.y <= 0) { player.position.y = 0; velocityY = 0; grounded = true; }
 
   const distFromCenter = Math.hypot(player.position.x, player.position.z);
-  if (distFromCenter > 55) {
-    const scale = 55/distFromCenter;
+  if (distFromCenter > 140) {
+    const scale = 140/distFromCenter;
     player.position.x *= scale; player.position.z *= scale;
   }
 
@@ -786,16 +901,32 @@ function update() {
     const dx = player.position.x - e.mesh.position.x;
     const dz = player.position.z - e.mesh.position.z;
     const d = Math.hypot(dx, dz);
-    if (d > 1.4) {
+    if (e.type.ranged) {
+      if (d > 9) {
+        // close distance until in throwing range
+        e.mesh.position.x += (dx/d) * e.speed;
+        e.mesh.position.z += (dz/d) * e.speed;
+        e.mesh.rotation.y = Math.atan2(dx, dz);
+      } else if (d < 6) {
+        // back off a little to keep range
+        e.mesh.position.x -= (dx/d) * e.speed * 0.6;
+        e.mesh.position.z -= (dz/d) * e.speed * 0.6;
+      }
+      if (nowMs > e.rangedCooldown && d < 20) {
+        e.rangedCooldown = nowMs + 2200;
+        spawnCheeseProjectile(e.mesh.position, player.position, e.type.dmg);
+      }
+    } else if (d > 1.4) {
       e.mesh.position.x += (dx/d) * e.speed;
       e.mesh.position.z += (dz/d) * e.speed;
       e.mesh.rotation.y = Math.atan2(dx, dz);
     } else if (nowMs > (e.contactCooldown||0)) {
-      hp -= 8;
+      hp -= e.type.dmg;
       e.contactCooldown = nowMs + 700;
       shakeAmount = Math.min(0.3, shakeAmount + 0.15);
     }
   });
+  updateCheeseProjectiles();
 
   waveTimer++;
   if (enemies.filter(e=>!e.dead).length === 0 && waveTimer > 60) {
