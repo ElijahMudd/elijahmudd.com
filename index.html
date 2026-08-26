@@ -1,48 +1,222 @@
 <!DOCTYPE html>
+
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
     <title>Elijah Mudd</title>
-  <meta name="viewport" content="width=device-width,initial-scale=1" >
-    <link rel="icon" type="image/png" href="/WIN_20241215_17_35_38_Pro-removebg-preview.png">
-  <link href="Style.css" rel="stylesheet">
-    <!-- Google Tag Manager -->
-<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-})(window,document,'script','dataLayer','GTM-NSGK4GBJ');</script>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+<link rel="icon" type="image/png" href="/WIN_20241215_17_35_38_Pro-removebg-preview.png">
+
+<style>
+    body {
+        margin: 0;
+        font-family: Arial, sans-serif;
+        background: #ffffff;
+        color: #222;
+    }
+
+    .center {
+        text-align: center;
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 30px 20px;
+    }
+
+    h1 {
+        margin-bottom: 40px;
+        font-size: 36px;
+    }
+
+    .project-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(315px, 1fr));
+        gap: 35px;
+        justify-items: center;
+    }
+
+    .project {
+        width: 315px;
+        text-align: center;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .project:hover {
+        transform: translateY(-5px);
+    }
+
+    .project-image {
+        width: 315px;
+        height: 250px;
+        background: #e5e5e5;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #888;
+        font-size: 18px;
+        overflow: hidden;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .project:hover .project-image {
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+    }
+
+    .project-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+        transition: transform 0.25s ease;
+    }
+
+    .project:hover .project-image img {
+        transform: scale(1.02);
+    }
+
+    .project-title {
+        display: block;
+        margin-top: 12px;
+        font-size: 20px;
+        font-weight: bold;
+        color: #222;
+        text-decoration: none;
+    }
+
+    .project-title:hover {
+        text-decoration: underline;
+    }
+
+    .project-description {
+        margin-top: 7px;
+        font-size: 15px;
+        line-height: 1.5;
+        color: #666;
+    }
+
+    @media (max-width: 700px) {
+        .project-grid {
+            grid-template-columns: 1fr;
+        }
+
+        h1 {
+            font-size: 30px;
+        }
+    }
+</style>
+
+<!-- Google Tag Manager -->
+<script>
+    (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+    })(window,document,'script','dataLayer','GTM-NSGK4GBJ');
+</script>
 <!-- End Google Tag Manager -->
-    <!-- Google tag (gtag.js) -->
+
+<!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-ZLFNR0TJ55"></script>
 <script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', 'G-ZLFNR0TJ55');
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){
+        dataLayer.push(arguments);
+    }
+    gtag('js', new Date());
+    gtag('config', 'G-ZLFNR0TJ55');
 </script>
+
 </head>
+
 <body>
-    <!-- Google Tag Manager (noscript) -->
-<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-NSGK4GBJ"
-height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+
+<!-- Google Tag Manager (noscript) -->
+<noscript>
+    <iframe src="https://www.googletagmanager.com/ns.html?id=GTM-NSGK4GBJ"
+    height="0" width="0" style="display:none;visibility:hidden"></iframe>
+</noscript>
 <!-- End Google Tag Manager (noscript) -->
-    <div class="center">
-        <h1>Elijah Mudd</h1>
-        <div class="notification">
-        <div class="notiglow"></div>
-        <div class="notiborderglow"></div>
-        <div class="notititle">Game Jam Submissions:</div>
-        <div class="notibody"><a href="/NesJam">Nes Game Jam 2026</a>
-            <br>
-            <a href="/SpinningSpells">The Very Serious Juniper Dev Game Jam</a>
+
+<div class="center">
+
+    <h1>Elijah Mudd</h1>
+
+    <div class="project-grid">
+
+        <div class="project">
+            <a href="/NesJam">
+                <div class="project-image">
+                    <img src="TowerOfCurses.png">
+                </div>
+            </a>
+
+            <a class="project-title" href="/NesJam">
+                Tower Of Curses
+            </a>
+
+            <div class="project-description">
+                A platformer made in the style of early NES games for the NES Game Jam 2026 with the theme "Horrible Night to have a Curse"
+            </div>
         </div>
-  </div>
-        <div class="notification">
-        <div class="notiglow"></div>
-        <div class="notiborderglow"></div>
-        <div class="notititle">Other Projects</div>
-        <div class="notibody"><a href="/lebronjames.html">Html Canvas Game</a><br><a href="/DVD.html">DVD Screensaver</a>
-        <br>
-        <a href="/SoftBodySim/">Soft body Simulation</a></div>
+
+
+        <!-- Spinning Spells -->
+        <div class="project">
+            <a href="/SpinningSpells">
+                <div class="project-image">
+                    <img src="SpinningSpells.png">
+                </div>
+            </a>
+
+            <a class="project-title" href="/SpinningSpells">
+                Spinning Spells
+            </a>
+
+            <div class="project-description">
+                A game made for the Very Serious Juniper Dev Game Jam, the theme for the jam was Spin to Win, and all art is made by Leo Hyman.
+            </div>
+        </div>
+
+
+        <!-- LeBron Game -->
+        <div class="project">
+            <a href="/lebronjames.html">
+                <div class="project-image">
+                    <img src="ljlitrf.png">
+                </div>
+            </a>
+
+            <a class="project-title" href="/lebronjames.html">
+                LeBron James: Lost in the Rainforest
+            </a>
+
+            <div class="project-description">
+                A game created for the Bloom Elementary Game Day 2025.
+            </div>
+        </div>
+
+        <!-- Soft Body Simulation -->
+        <div class="project">
+            <a href="/SoftBodySim/">
+                <div class="project-image">
+                    <img src="SoftBody.png">
+                </div>
+            </a>
+
+            <a class="project-title" href="/SoftBodySim/">
+                Soft Body Simulation
+            </a>
+
+            <div class="project-description">
+                An interactive physics simulation experimenting with
+                soft body physics and real-time deformation.
+            </div>
+        </div>
+
     </div>
+
+</div>
+
 </body>
+</html>
