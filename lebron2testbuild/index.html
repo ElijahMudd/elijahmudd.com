@@ -60,10 +60,9 @@
       var loaderUrl = buildUrl + "/lebron2testbuild.loader.js";
       var config = {
         arguments: [],
-        primaryDataUrls: ["globalgamemanagers.gz","globalgamemanagers.assets.gz","level0.gz","resources.assets.gz","Resources/unity_builtin_extra.gz","RuntimeInitializeOnLoads.json.gz","ScriptingAssemblies.json.gz","sharedassets0.assets.gz","boot.config.gz","Il2CppData/Metadata/global-metadata.dat.gz","Resources/unity default resources.gz"],
-        secondaryDataUrls: [],
-        frameworkUrl: buildUrl + "/lebron2testbuild.framework.js.gz",
-        codeUrl: buildUrl + "/lebron2testbuild.wasm.gz",
+        dataUrl: buildUrl + "/lebron2testbuild.data.unityweb",
+        frameworkUrl: buildUrl + "/lebron2testbuild.framework.js.unityweb",
+        codeUrl: buildUrl + "/lebron2testbuild.wasm.unityweb",
         streamingAssetsUrl: "StreamingAssets",
 
         // If you have a custom web site structure, or want to place multiple Unity build instances on the same page,
